@@ -120,6 +120,7 @@ public class CityControllerIT {
 		result.andExpect(jsonPath("$.errors[0].message").value("Campo requerido"));
 	}
 
+	
 	@Test
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
 		

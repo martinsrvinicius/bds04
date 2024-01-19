@@ -28,10 +28,10 @@ public class EventControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private TokenUtil tokenUtil;
 
@@ -39,10 +39,10 @@ public class EventControllerIT {
 	private String clientPassword;
 	private String adminUsername;
 	private String adminPassword;
-	
+
 	@BeforeEach
 	void setUp() throws Exception {
-		
+
 		clientUsername = "ana@gmail.com";
 		clientPassword = "123456";
 		adminUsername = "bob@gmail.com";
@@ -55,13 +55,10 @@ public class EventControllerIT {
 		LocalDate nextMonth = LocalDate.now().plusMonths(1L);
 		EventDTO dto = new EventDTO(null, "Expo XP", nextMonth, "https://expoxp.com.br", 1L);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").content(jsonBody).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnauthorized());
 	}
 
@@ -70,17 +67,13 @@ public class EventControllerIT {
 
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, clientUsername, clientPassword);
 		LocalDate nextMonth = LocalDate.now().plusMonths(1L);
-		
+
 		EventDTO dto = new EventDTO(null, "Expo XP", nextMonth, "https://expoxp.com.br", 1L);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
 		result.andExpect(jsonPath("$.name").value("Expo XP"));
@@ -94,17 +87,13 @@ public class EventControllerIT {
 
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		LocalDate nextMonth = LocalDate.now().plusMonths(1L);
-		
+
 		EventDTO dto = new EventDTO(null, "Expo XP", nextMonth, "https://expoxp.com.br", 1L);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
 		result.andExpect(jsonPath("$.name").value("Expo XP"));
@@ -118,17 +107,13 @@ public class EventControllerIT {
 
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		LocalDate nextMonth = LocalDate.now().plusMonths(1L);
-		
+
 		EventDTO dto = new EventDTO(null, "      ", nextMonth, "https://expoxp.com.br", 1L);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("name"));
 		result.andExpect(jsonPath("$.errors[0].message").value("Campo requerido"));
@@ -139,17 +124,13 @@ public class EventControllerIT {
 
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		LocalDate pastMonth = LocalDate.now().minusMonths(1L);
-		
+
 		EventDTO dto = new EventDTO(null, "Expo XP", pastMonth, "https://expoxp.com.br", 1L);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("date"));
 		result.andExpect(jsonPath("$.errors[0].message").value("A data do evento não pode ser passada"));
@@ -160,17 +141,13 @@ public class EventControllerIT {
 
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
 		LocalDate nextMonth = LocalDate.now().plusMonths(1L);
-		
+
 		EventDTO dto = new EventDTO(null, "Expo XP", nextMonth, "https://expoxp.com.br", null);
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/events")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/events").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("cityId"));
 		result.andExpect(jsonPath("$.errors[0].message").value("Campo requerido"));
@@ -178,12 +155,10 @@ public class EventControllerIT {
 
 	@Test
 	public void findAllShouldReturnPagedResources() throws Exception {
-		
-		ResultActions result =
-				mockMvc.perform(get("/events")
-					.contentType(MediaType.APPLICATION_JSON));
+
+		ResultActions result = mockMvc.perform(get("/events").contentType(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.content").exists());
-	}	
+	}
 }
